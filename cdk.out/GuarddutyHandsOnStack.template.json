@@ -1,0 +1,1014 @@
+{
+  "Resources": {
+    "dynamodbpassword6C4B647F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Type": "String",
+        "Value": "NA",
+        "Description": "Sample secret for generating GuardDuty findings.",
+        "Name": "guardduty_dynamodb_password_sample"
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/dynamodb-password/Resource"
+      }
+    },
+    "TableCD117FA1": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "KeySchema": [
+          {
+            "AttributeName": "name",
+            "KeyType": "HASH"
+          }
+        ],
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "name",
+            "AttributeType": "S"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "TableName": "GuardDuty-HandsOn-CustomerDB"
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/Table/Resource"
+      }
+    },
+    "guarddutythreatlistbucket8A240162": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": "guardduty-threat-list-us-east-1-381354187112"
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/guardduty-threat-list-bucket/Resource"
+      }
+    },
+    "guarddutylogbucket108BF635": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "LogDeliveryWrite",
+        "BucketName": "guardduty-log-us-east-1-381354187112"
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/guardduty-log-bucket/Resource"
+      }
+    },
+    "guarddutycompromisedbucket3451C9AD": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": "guardduty-compromised-us-east-1-381354187112",
+        "LoggingConfiguration": {
+          "DestinationBucketName": {
+            "Ref": "guarddutylogbucket108BF635"
+          }
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/guardduty-compromised-bucket/Resource"
+      }
+    },
+    "roleC7B7E775": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AmazonEC2RoleforSSM"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/role/Resource"
+      }
+    },
+    "securitygroupE7525979": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "GuarddutyHandsOnStack/security-group",
+        "GroupName": "GuardDuty-HandsOn-target",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow ICMP traffic from a specific IP range",
+            "FromPort": -1,
+            "IpProtocol": "icmp",
+            "ToPort": -1
+          }
+        ],
+        "VpcId": "vpc-05c3438e678ec0b90"
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/security-group/Resource"
+      }
+    },
+    "maliciousiamuser1policyB0DFEF83": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "ssm:GetParameter",
+                "ssm:GetParameters",
+                "ssm:DescribeParameters"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:aws:ssm:us-east-1:381354187112:*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "maliciousiamuser1policyB0DFEF83",
+        "Users": [
+          {
+            "Ref": "maliciousiamuser198EE1146"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/malicious-iam-user-1-policy/Resource"
+      }
+    },
+    "maliciousiamuser198EE1146": {
+      "Type": "AWS::IAM::User",
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/malicious-iam-user-1/Resource"
+      }
+    },
+    "maliciousiamuser1accesskey9FE1E6F7": {
+      "Type": "AWS::IAM::AccessKey",
+      "Properties": {
+        "UserName": {
+          "Ref": "maliciousiamuser198EE1146"
+        },
+        "Serial": 1
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/malicious-iam-user-1-access-key/Resource"
+      }
+    },
+    "maliciousinstance1InstanceProfile8655F490": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "roleC7B7E775"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/malicious-instance-1/InstanceProfile"
+      }
+    },
+    "maliciousinstance1990A55DC": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "AvailabilityZone": "us-east-1a",
+        "IamInstanceProfile": {
+          "Ref": "maliciousinstance1InstanceProfile8655F490"
+        },
+        "ImageId": {
+          "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "InstanceType": "t3.micro",
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "securitygroupE7525979",
+              "GroupId"
+            ]
+          }
+        ],
+        "SubnetId": "subnet-088b2af56aef1a7dd",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "GuardDuty-HandsOn-MaliciousInstance-Scenario-1-2"
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash\nmkdir /home/ec2-user/.aws\ntouch /home/ec2-user/.aws/credentials /home/ec2-user/.aws/config\ncat <<EOT >> /home/ec2-user/.aws/credentials\n[default]\naws_access_key_id = ",
+                {
+                  "Ref": "maliciousiamuser1accesskey9FE1E6F7"
+                },
+                "\naws_secret_access_key = ",
+                {
+                  "Fn::GetAtt": [
+                    "maliciousiamuser1accesskey9FE1E6F7",
+                    "SecretAccessKey"
+                  ]
+                },
+                "\nEOT\nchmod 746 /home/ec2-user/.aws/credentials\nchown ec2-user /home/ec2-user/.aws/credentials\nchmod 746 /home/ec2-user/.aws/config\nchown ec2-user /home/ec2-user/.aws/config\ncat <<EOT >> /home/ec2-user/gd-findings.sh\n#!/bin/bash\naws configure set default.region us-east-1\naws iam get-user\naws iam create-user --user-name GuardDuty-HandsOn-Sarah\naws dynamodb list-tables\naws s3api list-buckets\naws ssm describe-parameters\naws ssm get-parameters --names ",
+                {
+                  "Ref": "dynamodbpassword6C4B647F"
+                },
+                "\nsleep 10m\naws s3api list-objects --bucket ",
+                {
+                  "Ref": "guarddutycompromisedbucket3451C9AD"
+                },
+                "\nEOT\nchmod 744 /home/ec2-user/gd-findings.sh\nchown ec2-user /home/ec2-user/gd-findings.sh\necho \"* * * * * /home/ec2-user/gd-findings.sh > /home/ec2-user/gd-findings.log 2>&1\" | tee -a /var/spool/cron/ec2-user"
+              ]
+            ]
+          }
+        }
+      },
+      "DependsOn": [
+        "roleC7B7E775"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/malicious-instance-1/Resource"
+      }
+    },
+    "maliciousip": {
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc",
+        "InstanceId": {
+          "Ref": "maliciousinstance1990A55DC"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/malicious-ip"
+      }
+    },
+    "maliciousiamuser2policyAA048536": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:PutBucketPublicAccessBlock",
+                "s3:PutBucketLogging"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:aws:s3::*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "maliciousiamuser2policyAA048536",
+        "Users": [
+          {
+            "Ref": "maliciousiamuser2AF23258D"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/malicious-iam-user-2-policy/Resource"
+      }
+    },
+    "maliciousiamuser2AF23258D": {
+      "Type": "AWS::IAM::User",
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/malicious-iam-user-2/Resource"
+      }
+    },
+    "maliciousiamuser2accesskey6C6479D4": {
+      "Type": "AWS::IAM::AccessKey",
+      "Properties": {
+        "UserName": {
+          "Ref": "maliciousiamuser2AF23258D"
+        },
+        "Serial": 1
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/malicious-iam-user-2-access-key/Resource"
+      }
+    },
+    "maliciousinstance2InstanceProfileC82101E9": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "roleC7B7E775"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/malicious-instance-2/InstanceProfile"
+      }
+    },
+    "maliciousinstance2B061DEC4": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "AvailabilityZone": "us-east-1a",
+        "IamInstanceProfile": {
+          "Ref": "maliciousinstance2InstanceProfileC82101E9"
+        },
+        "ImageId": {
+          "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "InstanceType": "t3.micro",
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "securitygroupE7525979",
+              "GroupId"
+            ]
+          }
+        ],
+        "SubnetId": "subnet-088b2af56aef1a7dd",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "GuardDuty-HandsOn-MaliciousInstance-Scenario-4"
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash\nmkdir /home/ec2-user/.aws\ntouch /home/ec2-user/.aws/credentials /home/ec2-user/.aws/config\ncat <<EOT >> /home/ec2-user/.aws/credentials\n[default]\naws_access_key_id = ",
+                {
+                  "Ref": "maliciousiamuser2accesskey6C6479D4"
+                },
+                "\naws_secret_access_key = ",
+                {
+                  "Fn::GetAtt": [
+                    "maliciousiamuser2accesskey6C6479D4",
+                    "SecretAccessKey"
+                  ]
+                },
+                "\nEOT\nchmod 746 /home/ec2-user/.aws/credentials\nchown ec2-user /home/ec2-user/.aws/credentials\nchmod 746 /home/ec2-user/.aws/config\nchown ec2-user /home/ec2-user/.aws/config\nsleep 20m\ncat <<EOT >> /home/ec2-user/gd-findings.sh\n#!/bin/bash\naws configure set default.region us-east-1\naws s3api list-buckets\naws s3api delete-public-access-block --bucket ",
+                {
+                  "Ref": "guarddutycompromisedbucket3451C9AD"
+                },
+                "\naws s3api put-bucket-logging --bucket ",
+                {
+                  "Ref": "guarddutycompromisedbucket3451C9AD"
+                },
+                " --bucket-logging-status {}\nEOT\nchmod 744 /home/ec2-user/gd-findings.sh\nchown ec2-user /home/ec2-user/gd-findings.sh\necho \"* * * * * /home/ec2-user/gd-findings.sh > /home/ec2-user/gd-findings.log 2>&1\" | tee -a /var/spool/cron/ec2-user"
+              ]
+            ]
+          }
+        }
+      },
+      "DependsOn": [
+        "roleC7B7E775"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/malicious-instance-2/Resource"
+      }
+    },
+    "compromisedinstance1InstanceProfile7E691FF3": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "roleC7B7E775"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/compromised-instance-1/InstanceProfile"
+      }
+    },
+    "compromisedinstance1BACCABF8": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "AvailabilityZone": "us-east-1a",
+        "IamInstanceProfile": {
+          "Ref": "compromisedinstance1InstanceProfile7E691FF3"
+        },
+        "ImageId": {
+          "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "InstanceType": "t3.micro",
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "securitygroupE7525979",
+              "GroupId"
+            ]
+          }
+        ],
+        "SubnetId": "subnet-088b2af56aef1a7dd",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "GuardDuty-HandsOn-CompromisedInstance-Scenario-1"
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash\nexec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1\nsleep 5m\necho BEGIN\necho \"* * * * * ping -c 6 -i 10 ",
+                {
+                  "Ref": "maliciousip"
+                },
+                " | tee -a /var/spool/cron/ec2-user"
+              ]
+            ]
+          }
+        }
+      },
+      "DependsOn": [
+        "roleC7B7E775"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/compromised-instance-1/Resource"
+      }
+    },
+    "compromisedrole255096A1": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AmazonEC2RoleforSSM"
+              ]
+            ]
+          }
+        ],
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "ssm:PutParameter",
+                    "ssm:DescribeParameters",
+                    "ssm:GetParameters",
+                    "ssm:DeleteParameter",
+                    "dynamodb:*",
+                    "guardduty:*",
+                    "s3:PutObject",
+                    "s3:PutAccountPublicAccessBlock",
+                    "iam:PutRolePolicy"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*"
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "PolicyName": "GuardDutyCompromisedPolicy"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/compromised-role/Resource"
+      }
+    },
+    "compromisedinstance2InstanceProfile34582177": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "compromisedrole255096A1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/compromised-instance-2/InstanceProfile"
+      }
+    },
+    "compromisedinstance29420FFB0": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "AvailabilityZone": "us-east-1a",
+        "IamInstanceProfile": {
+          "Ref": "compromisedinstance2InstanceProfile34582177"
+        },
+        "ImageId": {
+          "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "InstanceType": "t3.micro",
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "securitygroupE7525979",
+              "GroupId"
+            ]
+          }
+        ],
+        "SubnetId": "subnet-088b2af56aef1a7dd",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "GuardDuty-HandsOn-CompromisedInstance-Scenario-3"
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash\naws configure set default.region us-east-1\nuuid=$(uuidgen)\nlist=\"gd-threat-list-example-$uuid.txt\"\nmaliciousip=`curl http://169.254.169.254/latest/meta-data/public-ipv4`\necho ",
+                {
+                  "Ref": "maliciousip"
+                },
+                " >> $list\naws s3 cp $list s3://",
+                {
+                  "Ref": "guarddutythreatlistbucket8A240162"
+                },
+                "/$list\nsleep 5\naws s3control put-public-access-block --account-id 381354187112 --public-access-block-configuration \"BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true\"\nid=`aws guardduty list-detectors --query 'DetectorIds[0]' --output text`\nn=0\nuntil [ \"$n\" -ge 5 ]\ndo\n  aws guardduty create-threat-intel-set --activate --detector-id $id --format TXT --location https://s3.amazonaws.com/",
+                {
+                  "Ref": "guarddutythreatlistbucket8A240162"
+                },
+                "/$list --name Example-Threat-List && break\n  n=$((n+1))\n  sleep 5\ndone\naws ssm put-parameter --name ",
+                {
+                  "Ref": "dynamodbpassword6C4B647F"
+                },
+                " --type \"SecureString\" --value Password123 --overwrite\naws dynamodb put-item --table-name ",
+                {
+                  "Ref": "TableCD117FA1"
+                },
+                " --item '{ \"name\": { \"S\": \"Joshua Tree\" }, \"state\": {\"S\": \"California\"}, \"website\":{\"S\": \"https://www.nps.gov/jotr/index.htm\"} }'"
+              ]
+            ]
+          }
+        }
+      },
+      "DependsOn": [
+        "compromisedrole255096A1"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/compromised-instance-2/Resource"
+      }
+    },
+    "snstopic2C4AE3C1": {
+      "Type": "AWS::SNS::Topic",
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/sns-topic/Resource"
+      }
+    },
+    "snstopicshazi7804gmailcom6BA0C7F2": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+        "Protocol": "email",
+        "TopicArn": {
+          "Ref": "snstopic2C4AE3C1"
+        },
+        "Endpoint": "shazi7804@gmail.com"
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/sns-topic/shazi7804@gmail.com/Resource"
+      }
+    },
+    "snstopicPolicy9AD78723": {
+      "Type": "AWS::SNS::TopicPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sns:Publish",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": {
+                "Ref": "snstopic2C4AE3C1"
+              },
+              "Sid": "0"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Topics": [
+          {
+            "Ref": "snstopic2C4AE3C1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/sns-topic/Policy/Resource"
+      }
+    },
+    "snstopicpolicy7307B210": {
+      "Type": "AWS::SNS::TopicPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sns:Publish",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": {
+                "Ref": "snstopic2C4AE3C1"
+              },
+              "Sid": "0"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Topics": [
+          {
+            "Ref": "snstopic2C4AE3C1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/sns-topic-policy/Resource"
+      }
+    },
+    "remediationlambdarole04C3A7FB": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "ssm:DescribeParameters",
+                    "ssm:GetParameter",
+                    "ssm:GetParameters",
+                    "ec2:ReplaceIamInstanceProfileAssociation",
+                    "ec2:DescribeIamInstanceProfileAssociations",
+                    "iam:CreateInstanceProfile",
+                    "iam:AddRoleToInstanceProfile",
+                    "iam:RemoveRoleFromInstanceProfile",
+                    "iam:ListInstanceProfilesForRole",
+                    "iam:DeleteInstanceProfile",
+                    "iam:PassRole",
+                    "iam:PutRolePolicy",
+                    "sns:Publish",
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*"
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "PolicyName": "InstanceCredentialExfiltration"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/remediation-lambda-role/Resource"
+      }
+    },
+    "remediationlambda13A57A86": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-381354187112-us-east-1",
+          "S3Key": "45f6b5df3f44fc0817ebd88d63af95010b09bf84971e80dbae3e41be35befa7f.zip"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "remediationlambdarole04C3A7FB",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "TOPIC_ARN": {
+              "Ref": "snstopic2C4AE3C1"
+            }
+          }
+        },
+        "Handler": "index.handler",
+        "Runtime": "python3.8",
+        "Timeout": 35
+      },
+      "DependsOn": [
+        "remediationlambdarole04C3A7FB"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/remediation-lambda/Resource",
+        "aws:asset:path": "asset.45f6b5df3f44fc0817ebd88d63af95010b09bf84971e80dbae3e41be35befa7f",
+        "aws:asset:is-bundled": false,
+        "aws:asset:property": "Code"
+      }
+    },
+    "guarddutyec2eventrule444DBD64": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "EventPattern": {
+          "source": [
+            "aws.guardduty"
+          ],
+          "detail": {
+            "type": [
+              "UnauthorizedAccess:EC2/MaliciousIPCaller.Custom"
+            ]
+          }
+        },
+        "Name": "GuardDuty-HandsOn-EC2-MaliciousIPCaller",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "remediationlambda13A57A86",
+                "Arn"
+              ]
+            },
+            "Id": "Target0"
+          },
+          {
+            "Arn": {
+              "Ref": "snstopic2C4AE3C1"
+            },
+            "Id": "Target1",
+            "InputTransformer": {
+              "InputPathsMap": {
+                "detail-id": "$.detail.id",
+                "detail-resource-instanceDetails-instanceId": "$.detail.resource.instanceDetails.instanceId",
+                "detail-region": "$.detail.region"
+              },
+              "InputTemplate": "\"GuardDuty Finding | ID:<detail-id>: The EC2 instance <detail-resource-instanceDetails-instanceId> may be compromised and should be investigated. Go to https://console.aws.amazon.com/guardduty/home?region=<detail-region>#/findings?macros=current&fId=<detail-id>\""
+            }
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/guardduty-ec2-event-rule/Resource"
+      }
+    },
+    "guarddutyec2eventruleAllowEventRuleGuarddutyHandsOnStackremediationlambda769024987EFC831C": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "remediationlambda13A57A86",
+            "Arn"
+          ]
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "guarddutyec2eventrule444DBD64",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/guardduty-ec2-event-rule/AllowEventRuleGuarddutyHandsOnStackremediationlambda76902498"
+      }
+    },
+    "guarddutyeventiaminstancecredentialexfiltrationrule7E7F570C": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "EventPattern": {
+          "source": [
+            "aws.guardduty"
+          ],
+          "detail": {
+            "type": [
+              "UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration.OutsideAWS"
+            ]
+          }
+        },
+        "Name": "GuardDuty-HandsOn-IAMUser-InstanceCredentialExfiltration",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "remediationlambda13A57A86",
+                "Arn"
+              ]
+            },
+            "Id": "Target0"
+          },
+          {
+            "Arn": {
+              "Ref": "snstopic2C4AE3C1"
+            },
+            "Id": "Target1",
+            "InputTransformer": {
+              "InputPathsMap": {
+                "detail-id": "$.detail.id",
+                "detail-resource-accessKeyDetails-userName": "$.detail.resource.accessKeyDetails.userName",
+                "detail-region": "$.detail.region"
+              },
+              "InputTemplate": "\"GuardDuty Finding | ID:<detail-id>: An EC2 instance IAM credentials (Role: <detail-resource-accessKeyDetails-userName>) may be compromised and should be investigated. Go to https://console.aws.amazon.com/guardduty/home?region=<detail-region>#/findings?macros=current&fId=<detail-id>\""
+            }
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/guardduty-event-iam-instance-credential-exfiltration-rule/Resource"
+      }
+    },
+    "guarddutyeventiaminstancecredentialexfiltrationruleAllowEventRuleGuarddutyHandsOnStackremediationlambda76902498C66DDE5E": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "remediationlambda13A57A86",
+            "Arn"
+          ]
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "guarddutyeventiaminstancecredentialexfiltrationrule7E7F570C",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/guardduty-event-iam-instance-credential-exfiltration-rule/AllowEventRuleGuarddutyHandsOnStackremediationlambda76902498"
+      }
+    },
+    "guarddutyiamusereventrule3B19D947": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "EventPattern": {
+          "source": [
+            "aws.guardduty"
+          ],
+          "detail": {
+            "type": [
+              "UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom",
+              "Discovery:S3/MaliciousIPCaller.Custom"
+            ]
+          }
+        },
+        "Name": "GuardDuty-HandsOn-IAMUser-MaliciousIPCaller",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "snstopic2C4AE3C1"
+            },
+            "Id": "Target0",
+            "InputTransformer": {
+              "InputPathsMap": {
+                "detail-id": "$.detail.id",
+                "detail-resource-accessKeyDetails-userName": "$.detail.resource.accessKeyDetails.userName",
+                "detail-region": "$.detail.region"
+              },
+              "InputTemplate": "\"GuardDuty Finding | ID:<detail-id>: An AWS API operation was invoked (userName: <detail-resource-accessKeyDetails-userName>) from an IP address that is included on your threat list and should be investigated. Go to https://console.aws.amazon.com/guardduty/home?region=<detail-region>#/findings?macros=current&fId=<detail-id>\""
+            }
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/guardduty-iam-user-event-rule/Resource"
+      }
+    },
+    "guarddutybucketstealtheventrule08BAABC8": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "EventPattern": {
+          "source": [
+            "aws.guardduty"
+          ],
+          "detail": {
+            "type": [
+              "Policy:S3/BucketBlockPublicAccessDisabled",
+              "Stealth:S3/ServerAccessLoggingDisabled"
+            ]
+          }
+        },
+        "Name": "GuardDuty-HandsOn-S3-Stealth-Policy",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "snstopic2C4AE3C1"
+            },
+            "Id": "Target0",
+            "InputTransformer": {
+              "InputPathsMap": {
+                "detail-id": "$.detail.id",
+                "detail-resource-accessKeyDetails-userName": "$.detail.resource.accessKeyDetails.userName",
+                "detail-accountId": "$.detail.accountId",
+                "detail-region": "$.detail.region"
+              },
+              "InputTemplate": "\"GuardDuty Finding | ID:<detail-id>: An AWS S3 related API operation was invoked by user (userName: <detail-resource-accessKeyDetails-userName>) in account <detail-accountId> . This activity seems suspicious. Please investigate with the user to check if this was expectated behaviour. Go to https://console.aws.amazon.com/guardduty/home?region=<detail-region>#/findings?macros=current&fId=<detail-id>\""
+            }
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/guardduty-bucket-stealth-event-rule/Resource"
+      }
+    },
+    "CDKMetadata": {
+      "Type": "AWS::CDK::Metadata",
+      "Properties": {
+        "Analytics": "v2:deflate64:H4sIAAAAAAAA/1VRTU/DMAz9LbtngRUQ5w0NNHGpOjhPqetNXtukipOhqup/J0k36E7vPfv5I3EmV6/ycaF+eAlVvWyolMPeKahFgWy8BRQhdxiY25iwpE+5sqpFh1a8HfWfGEXVa9WaKjT4UmWDMZvIKPhJDhsPNboYvLIJNoqDgVToXpipKGFuGoI+TZjYN08DE64BkPkTk+FO7DQ7pQFza44UZyNkYXEEb8n1H9b4LtruA7eieYPIt7s8LK85vMh0BOlFiex9yWCpc2R0ajfXyfK//0yOolFtWSk5vHsNt+I5z9G2xBxU/LWDYkbHch1B4AV1EEPhr/8UcBzvjiCSM9zvFO6UPNcjjkKbCuWZHy6rZ7l6kdnizERL67WjFmUx4S9SATB9DgIAAA=="
+      },
+      "Metadata": {
+        "aws:cdk:path": "GuarddutyHandsOnStack/CDKMetadata/Default"
+      }
+    }
+  },
+  "Parameters": {
+    "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+      "Default": "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}
