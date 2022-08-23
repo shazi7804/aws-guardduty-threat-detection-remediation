@@ -28,7 +28,7 @@ TBD ...
 
 ## Scenarios
 
-| Scenario | Finding |
+| Scenario | GuardDuty Finding |
 |-----------|:-------------:|
 | [Compromised AWS IAM credentials](https://catalog.workshops.aws/guardduty/en-US/module7) | UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom |
 | [Compromised EC2 instance](https://catalog.workshops.aws/guardduty/en-US/module8) | UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom |
