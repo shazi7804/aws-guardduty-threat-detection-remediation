@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { GuarddutyEnableStack } from '../lib/guardduty';
+import { GuarddutyEnabledStack } from '../lib/guardduty';
 import { GuarddutyHandsOnStack } from '../lib/hands-on';
 
 const env  = {
@@ -10,5 +10,5 @@ const env  = {
 };
 
 const app = new cdk.App();
-new GuarddutyEnableStack(app, 'GuarddutyEnableStack', { env });
+new GuarddutyEnabledStack(app, 'GuarddutyEnabledStack', { env });
 new GuarddutyHandsOnStack(app, 'GuarddutyHandsOnStack', { env });

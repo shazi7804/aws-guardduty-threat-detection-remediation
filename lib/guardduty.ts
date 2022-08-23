@@ -2,7 +2,7 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as guardduty from 'aws-cdk-lib/aws-guardduty';
 
-export class GuarddutyEnableStack extends Stack {
+export class GuarddutyEnabledStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 

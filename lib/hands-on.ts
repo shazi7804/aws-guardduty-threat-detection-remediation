@@ -12,14 +12,16 @@ import * as subscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as targets from 'aws-cdk-lib/aws-events-targets';
 
+const config = require('../config.json');
+
 export class GuarddutyHandsOnStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const namePrefix = 'GuardDuty-HandsOn';
-    const email = 'shazi7804@gmail.com';
+    const namePrefix = config.namePrefix;
+    const email = config.email;
 
-    const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }) || VpcProvider.createSimple(this);
+    const vpc = VpcProvider.createSimple(this);
 
     const ddbPassword = new ssm.StringParameter(this, 'dynamodb-password', {
       description: 'Sample secret for generating GuardDuty findings.',

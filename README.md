@@ -1,14 +1,89 @@
-# Welcome to your CDK TypeScript project
+# Amazon GuardDuty Threat Detection and Remediation
 
-This is a blank project for TypeScript development with CDK.
+This repository walks you through a scenario covering threat detection and remediation using Amazon GuardDuty;
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## Table of contents
 
-## Useful commands
+- [Architecture](#architecture)
+- [Deployment](#deployment-steps)
+- [Test](#test)
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+## Architecture
+###  Architecture Diagram
+
+TBD ...
+
+- `GuarddutyEnabledStack`: This stack for enabled detector setting.
+- `GuarddutyHandsOnStack`: This stack will deploy malicious and compromised instances and resources.
+
+###  Components Details
+- [**AWS CDK**](https://aws.amazon.com/cdk/) – This solution uses the CDK Template language in Typescript to create each resource.
+- [**Amazon EC2**](https://aws.amazon.com/ec2/) – It's will created 2 malicious instances and 2 compromised instance.
+- [**Amazon S3**](https://aws.amazon.com/s3/) – Logging and compromised detection data is stored in an Simple Storage Service (S3) Bucket.
+- [**Amazon DynamoDB**](https://aws.amazon.com/dynamodb/) – Sample for compromised database table.
+- [**Amazon SNS**](https://aws.amazon.com/sns/) – Notification.
+- [**AWS Lambda**](https://aws.amazon.com/sns/) – Capture GuardDuty finding event and send response email to Admin.
+- [**Amazon Eventbridge**](https://aws.amazon.com/sns/) – Capture GuardDuty finding event and send response email to Admin.
+
+## Deployment Steps
+###  Step 1. Prepare an AWS Account and IAM Access
+Create your AWS account at [http://aws.amazon.com](http://aws.amazon.com) by following the instructions on the site. Then create IAM User permission setting `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in your environment variables.
+
+###  Step 2. CDK Install and Bootstarp
+
+Install [AWS CDK CLI](https://docs.aws.amazon.com/cdk/latest/guide/tools.html) from npm
+
+```bash
+$ npm i -g aws-cdk
+```
+
+For first initial, run `bootstrap` deploy in your acoount.
+
+```bash
+$ cdk bootstrap aws://${your-account-id}/us-east-1
+```
+
+Install dependencies packages.
+
+```bash
+$ npm install
+```
+
+### Step 3. Configure deployment manager email
+
+Configuration setting file [config.json](./cdk.context.json), The deployment administrator will be notified for revoke old sessions.
+
+```
+# config.json
+{
+    "namePrefix": "GuardDuty-HandsOn",
+    "email": "root@mail.com"
+}
+```
+
+###  Step 4. Deploy
+
+```bash
+$ cdk ls
+GuarddutyEnabledStack
+GuarddutyHandsOnStack
+```
+
+If you have enabled the GuardDuty dectector setting, then you can deploy GuarddutyHandsOnStack directly
+```bash
+$ cdk deploy GuarddutyHandsOnStack
+```
+
+Or deploy all stacks
+
+```bash
+$ cdk deploy --all
+```
+
+## Test
+
+To build the project and run the test, issue these commands.
+
+```
+$ npm run build && npm test
+```
