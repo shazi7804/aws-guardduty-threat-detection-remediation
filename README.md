@@ -33,6 +33,14 @@ TBD ...
 | [Compromised AWS IAM credentials](https://catalog.workshops.aws/guardduty/en-US/module7) | UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom |
 | [Compromised EC2 instance](https://catalog.workshops.aws/guardduty/en-US/module8) | UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom |
 | [Compromised S3 Bucket](https://catalog.workshops.aws/guardduty/en-US/module9) | Stealth:S3/ServerAccessLoggingDisabled |
+| IAM Role credential exfiltration | (TBD)UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration.OutsideAWS |
+| EKS Findings Remediation | (TBD)Policy:Kubernetes/AdminAccessToDefaultServiceAccount |
+| EKS Findings Remediation | (TBD)Discovery:Kubernetes/SuccessfulAnonymousAccess |
+| EKS Findings Remediation | (TBD)Policy:Kubernetes/AnonymousAccessGranted |
+| EKS Findings Remediation | (TBD)Execution:Kubernetes/ExecInKubeSystemPod |
+| EKS Findings Remediation | (TBD)PrivilegeEscalation:Kubernetes/PrivilegedContainer |
+| EKS Findings Remediation | (TBD)Persistence:Kubernetes/ContainerWithSensitiveMount |
+| EKS Findings Remediation | (TBD)Policy:Kubernetes/ExposedDashboard |
 
 ## Deployment Steps
 ###  Step 1. Prepare an AWS Account and IAM Access
