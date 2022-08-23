@@ -30,9 +30,9 @@ TBD ...
 
 | Scenario | Finding |
 |-----------|:-------------:|
-| Compromised AWS IAM credentials | UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom |
-| Compromised EC2 instance | UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom |
-| Compromised S3 Bucket | Stealth:S3/ServerAccessLoggingDisabled |
+| [Compromised AWS IAM credentials](https://catalog.workshops.aws/guardduty/en-US/module7) | UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom |
+| [Compromised EC2 instance](https://catalog.workshops.aws/guardduty/en-US/module8) | UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom |
+| [Compromised S3 Bucket](https://catalog.workshops.aws/guardduty/en-US/module9) | Stealth:S3/ServerAccessLoggingDisabled |
 
 ## Deployment Steps
 ###  Step 1. Prepare an AWS Account and IAM Access
