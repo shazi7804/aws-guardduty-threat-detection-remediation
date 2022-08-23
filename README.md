@@ -5,7 +5,7 @@ This repository walks you through a scenario covering threat detection and remed
 ## Table of contents
 
 - [Architecture](#architecture)
-- [Scenarios](#scenarios)
+- [Scenario](#scenario)
 - [Deployment](#deployment-steps)
 - [Test](#test)
 
@@ -26,7 +26,7 @@ TBD ...
 - [**AWS Lambda**](https://aws.amazon.com/sns/) – Capture GuardDuty finding event and send response email to Admin.
 - [**Amazon Eventbridge**](https://aws.amazon.com/sns/) – Capture GuardDuty finding event and send response email to Admin.
 
-## Scenarios
+## Scenario
 
 | Scenario | GuardDuty Finding |
 |-----------|:-------------:|
