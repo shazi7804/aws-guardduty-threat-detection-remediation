@@ -5,6 +5,7 @@ This repository walks you through a scenario covering threat detection and remed
 ## Table of contents
 
 - [Architecture](#architecture)
+- [Scenarios](#scenarios)
 - [Deployment](#deployment-steps)
 - [Test](#test)
 
@@ -24,6 +25,14 @@ TBD ...
 - [**Amazon SNS**](https://aws.amazon.com/sns/) – Notification.
 - [**AWS Lambda**](https://aws.amazon.com/sns/) – Capture GuardDuty finding event and send response email to Admin.
 - [**Amazon Eventbridge**](https://aws.amazon.com/sns/) – Capture GuardDuty finding event and send response email to Admin.
+
+## Scenarios
+
+| Scenario | Finding |
+|-----------|:-------------:|
+| Compromised AWS IAM credentials | UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom |
+| Compromised EC2 instance | UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom |
+| Compromised S3 Bucket | Stealth:S3/ServerAccessLoggingDisabled |
 
 ## Deployment Steps
 ###  Step 1. Prepare an AWS Account and IAM Access
@@ -49,7 +58,7 @@ Install dependencies packages.
 $ npm install
 ```
 
-### Step 3. Configure deployment manager email
+### Step 3. Configuration 
 
 Configuration setting file [config.json](./cdk.context.json), The deployment administrator will be notified for revoke old sessions.
 
@@ -69,7 +78,7 @@ GuarddutyEnabledStack
 GuarddutyHandsOnStack
 ```
 
-If you have enabled the GuardDuty dectector setting, then you can deploy GuarddutyHandsOnStack directly
+If you have enabled the GuardDuty dectector setting, then you can deploy `GuarddutyHandsOnStack` directly
 ```bash
 $ cdk deploy GuarddutyHandsOnStack
 ```
